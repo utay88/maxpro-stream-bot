@@ -1,4 +1,12 @@
-,
-"engines": {
-  "node": "18.x"
+{
+  "name": "maxpro-stream-bot",
+  "version": "1.0.0",
+  "main": "api/resolve.js",
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": "18.x"
+  }
 }
