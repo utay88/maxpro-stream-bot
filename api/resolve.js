@@ -9,11 +9,15 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(streamUrl);
+
     if (!response.ok) {
       throw new Error("Yayın alınamadı.");
     }
 
+    // CORS ve içerik tipini ayarla
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Content-Type", "application/vnd.apple.mpegurl");
+
     const data = await response.text();
     res.status(200).send(data);
   } catch (error) {
