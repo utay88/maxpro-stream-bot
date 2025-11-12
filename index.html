@@ -1,33 +1,72 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MaxPro Stream Player</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-      body {
-        background-color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
-      video {
-        width: 90vw;
-        height: 90vh;
-        background-color: #000;
-      }
-    </style>
-  </head>
-  <body>
-    <video id="video" controls autoplay></video>
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const streamUrl = params.get("url");
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaxPro Stream Player</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      background-color: #000;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    video {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      background: #000;
+    }
+    #status {
+      color: white;
+      position: absolute;
+      bottom: 20px;
+      text-align: center;
+      width: 100%;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" controls autoplay muted playsinline></video>
+  <div id="status">Yükleniyor...</div>
 
-      if (!streamUrl) {
-        alert("URL parametresi eksik!");
-      } else {
-        const
+  <script>
+    const video = document.getElementById("video");
+    const status = document.getElementById("status");
+    const params = new URLSearchParams(window.location.search);
+    const url = params.get("url");
+
+    if (!url) {
+      status.textContent = "URL parametresi eksik!";
+    } else if (Hls.isSupported()) {
+      const hls = new Hls({
+        debug: true,
+        xhrSetup: function(xhr, url) {
+          xhr.withCredentials = false;
+        }
+      });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        status.textContent = "Yükleme tamamlandı, oynatılıyor...";
+        video.play();
+      });
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        status.textContent = "Hata: " + data.details;
+      });
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = url;
+      video.addEventListener("loadedmetadata", () => {
+        status.textContent = "Oynatılıyor...";
+        video.play();
+      });
+    } else {
+      status.textContent = "Tarayıcınız HLS desteklemiyor.";
+    }
+  </script>
+</body>
+</html>
