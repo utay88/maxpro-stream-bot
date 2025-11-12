@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaxPro Stream Player</title>
+</head>
+<body style="background:black;display:flex;justify-content:center;align-items:center;height:100vh;">
+  <video id="player" controls autoplay style="max-width:100%;max-height:100%;"></video>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamUrl = urlParams.get("url");
+    if (streamUrl) {
+      document.getElementById("player").src = `/api/resolve?url=${encodeURIComponent(streamUrl)}`;
+    } else {
+      document.body.innerHTML = "<h2 style='color:white'>Yayın URL'si belirtilmemiş.</h2>";
+    }
+  </script>
+</body>
+</html>
